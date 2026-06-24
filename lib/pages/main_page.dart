@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:strawnotes/core/constants.dart';
+import 'package:strawnotes/pages/new_edit_note_page.dart';
 import 'package:strawnotes/widgets/note_fab.dart';
 import 'package:strawnotes/widgets/note_grid.dart';
+import 'package:strawnotes/widgets/note_icon_button.dart';
+import 'package:strawnotes/widgets/note_icon_button_outlined.dart'
+    show NoteIconButtonOutlined;
 import 'package:strawnotes/widgets/note_list.dart';
 import 'package:strawnotes/widgets/search_field.dart';
 
@@ -26,21 +30,22 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         title: Text("Straw Notes"),
         actions: [
-          IconButton(
+          NoteIconButtonOutlined(
+            icon: FontAwesomeIcons.rightFromBracket,
             onPressed: () {},
-            icon: FaIcon(FontAwesomeIcons.rightFromBracket),
-            style: IconButton.styleFrom(
-              backgroundColor: primary,
-              foregroundColor: white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: black),
-              ),
-            ),
           ),
         ],
       ),
-      floatingActionButton: NoteFab(),
+      floatingActionButton: NoteFab(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NewOrEditNotePage(isNewNote: true),
+            ),
+          );
+        },
+      ),
 
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -52,26 +57,15 @@ class _MainPageState extends State<MainPage> {
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Row(
                 children: [
-                  IconButton(
+                  NoteIconButton(
+                    icon: isDescending
+                        ? FontAwesomeIcons.arrowDown
+                        : FontAwesomeIcons.arrowUp,
                     onPressed: () {
                       setState(() {
                         isDescending = !isDescending;
                       });
                     },
-                    icon: FaIcon(
-                      isDescending
-                          ? FontAwesomeIcons.arrowDown
-                          : FontAwesomeIcons.arrowUp,
-                    ),
-                    padding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                    constraints: BoxConstraints(),
-                    style: IconButton.styleFrom(
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-
-                    iconSize: 18,
-                    color: gray700,
                   ),
                   SizedBox(width: 16),
                   DropdownButton<String>(
@@ -113,26 +107,16 @@ class _MainPageState extends State<MainPage> {
                     },
                   ),
                   const Spacer(),
-                  IconButton(
+                  NoteIconButton(
+                    icon: isGrid
+                        ? FontAwesomeIcons.tableCellsLarge
+                        : FontAwesomeIcons.bars,
+                    iconSize: 10,
                     onPressed: () {
                       setState(() {
                         isGrid = !isGrid;
                       });
                     },
-                    icon: FaIcon(
-                      isGrid
-                          ? FontAwesomeIcons.tableCellsLarge
-                          : FontAwesomeIcons.bars,
-                    ),
-                    padding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                    constraints: BoxConstraints(),
-                    style: IconButton.styleFrom(
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-
-                    iconSize: 18,
-                    color: gray700,
                   ),
                 ],
               ),

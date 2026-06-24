@@ -3,7 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:strawnotes/core/constants.dart';
 
 class NoteFab extends StatelessWidget {
-  const NoteFab({super.key});
+  const NoteFab({super.key, required this.onPressed});
+
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,7 @@ class NoteFab extends StatelessWidget {
         boxShadow: [BoxShadow(color: black, offset: Offset(4, 4))],
       ),
       child: FloatingActionButton.large(
-        onPressed: () {},
+        onPressed: onPressed,
         backgroundColor: primary,
         foregroundColor: white,
         shape: RoundedRectangleBorder(
