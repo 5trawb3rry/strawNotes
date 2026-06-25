@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:strawnotes/models/note.dart';
 import 'package:strawnotes/widgets/note_card.dart';
 
-class NotesList extends StatefulWidget {
-  const NotesList({super.key});
+class NotesList extends StatelessWidget {
+  const NotesList({super.key, required this.notes});
 
-  @override
-  State<NotesList> createState() => _NotesListState();
-}
+  final List<Note> notes;
 
-class _NotesListState extends State<NotesList> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      itemCount: 10,
+      itemCount: notes.length,
       clipBehavior: Clip.none,
       itemBuilder: (context, index) {
-        return NoteCard(isInGrid: false);
+        return NoteCard(isInGrid: false, note: notes[index]);
       },
       separatorBuilder: (context, index) {
         return SizedBox(height: 8);

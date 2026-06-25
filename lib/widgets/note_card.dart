@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:strawnotes/change_notifiers/new_note_controller.dart';
+import 'package:strawnotes/models/note.dart';
 import 'package:strawnotes/pages/new_edit_note_page.dart';
 import '../core/constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class NoteCard extends StatelessWidget {
-  const NoteCard({super.key, required this.isInGrid});
+  const NoteCard({super.key, required this.isInGrid, required this.note});
 
   final bool isInGrid;
+  final Note note;
+
+
 
   @override
   Widget build(BuildContext context) {
+    final tags = note.tags ?? [];
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => NewOrEditNotePage(isNewNote: false),
+            builder: (context) => ChangeNotifierProvider(
+              create: (_) => NewNoteController(),
+              child: NewOrEditNotePage(isNewNote: false),
+            ),
           ),
         );
       },
@@ -27,7 +39,6 @@ class NoteCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: primary.withValues(alpha: 0.5),
-
               offset: Offset(4, 4),
             ),
           ],
@@ -37,7 +48,7 @@ class NoteCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'This is a title',
+              note.title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -47,34 +58,36 @@ class NoteCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 4),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(
-                  3,
-                  (index) => Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: gray100,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 2,
-                    ),
-                    margin: EdgeInsets.only(right: 4),
-                    child: Text(
-                      'First chip',
-                      style: TextStyle(fontSize: 12, color: gray700),
-                    ),
-                  ),
+            if (tags.isNotEmpty)
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: tags
+                      .map(
+                        (tag) => Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: gray100,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 2,
+                          ),
+                          margin: EdgeInsets.only(right: 4),
+                          child: Text(
+                            tag,
+                            style: TextStyle(fontSize: 12, color: gray700),
+                          ),
+                        ),
+                      )
+                      .toList(),
                 ),
               ),
-            ),
             SizedBox(height: 4),
             if (isInGrid)
               Expanded(
                 child: Text(
-                  'Some Content',
+                  note.content,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 12, color: gray700),
@@ -82,7 +95,7 @@ class NoteCard extends StatelessWidget {
               )
             else
               Text(
-                'Some Content',
+                note.content,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 12, color: gray700),
@@ -90,7 +103,9 @@ class NoteCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  '29 Dec, 2003',
+                  DateFormat('dd MMM, yyyy').format(
+                    DateTime.fromMillisecondsSinceEpoch(note.dateCreated),
+                  ),
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                 Spacer(),
